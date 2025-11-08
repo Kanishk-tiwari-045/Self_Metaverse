@@ -1,0 +1,8 @@
+<svg width="64" height="32" viewBox="0 0 64 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Table top -->
+  <rect x="2" y="8" width="60" height="16" fill="#D2691E" stroke="#8B4513" stroke-width="1"/>
+  <rect x="4" y="10" width="56" height="12" fill="#F4A460"/>
+  <!-- Table legs -->
+  <rect x="6" y="24" width="4" height="8" fill="#8B4513"/>
+  <rect x="54" y="24" width="4" height="8" fill="#8B4513"/>
+</svg>

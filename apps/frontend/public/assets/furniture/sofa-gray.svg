@@ -1,0 +1,15 @@
+<svg width="48" height="32" viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Sofa base -->
+  <rect x="4" y="16" width="40" height="12" fill="#4A4A4A" stroke="#2C2C2C" stroke-width="1"/>
+  <rect x="6" y="18" width="36" height="8" fill="#696969"/>
+  <!-- Sofa back -->
+  <rect x="4" y="8" width="40" height="10" fill="#4A4A4A" stroke="#2C2C2C" stroke-width="1"/>
+  <rect x="6" y="10" width="36" height="6" fill="#696969"/>
+  <!-- Armrests -->
+  <rect x="0" y="10" width="6" height="18" fill="#4A4A4A" stroke="#2C2C2C" stroke-width="1"/>
+  <rect x="42" y="10" width="6" height="18" fill="#4A4A4A" stroke="#2C2C2C" stroke-width="1"/>
+  <!-- Cushions -->
+  <ellipse cx="12" cy="20" rx="4" ry="2" fill="#778899"/>
+  <ellipse cx="24" cy="20" rx="4" ry="2" fill="#778899"/>
+  <ellipse cx="36" cy="20" rx="4" ry="2" fill="#778899"/>
+</svg>

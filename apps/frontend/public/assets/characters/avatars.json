@@ -1,0 +1,68 @@
+{
+  "avatars": {
+    "collections": [
+      {
+        "name": "Default Characters",
+        "position": 0,
+        "textures": [
+          {
+            "id": "male1",
+            "name": "Male 1",
+            "url": "/assets/characters/Male 01-1.png",
+            "position": 0,
+            "gender": "male"
+          },
+          {
+            "id": "male2",
+            "name": "Male 2",
+            "url": "/assets/characters/Male 02-2.png",
+            "position": 1,
+            "gender": "male"
+          },
+          {
+            "id": "male3",
+            "name": "Male 3",
+            "url": "/assets/characters/Male 03-4.png",
+            "position": 2,
+            "gender": "male"
+          },
+          {
+            "id": "male4",
+            "name": "Male 4",
+            "url": "/assets/characters/Male 09-1.png",
+            "position": 3,
+            "gender": "male"
+          },
+          {
+            "id": "female1",
+            "name": "Female 1",
+            "url": "/assets/characters/Female 01-1.png",
+            "position": 4,
+            "gender": "female"
+          },
+          {
+            "id": "female2",
+            "name": "Female 2",
+            "url": "/assets/characters/Female 02-2.png",
+            "position": 5,
+            "gender": "female"
+          },
+          {
+            "id": "female3",
+            "name": "Female 3",
+            "url": "/assets/characters/Female 03-3.png",
+            "position": 6,
+            "gender": "female"
+          },
+          {
+            "id": "female4",
+            "name": "Female 4",
+            "url": "/assets/characters/Female 04-4.png",
+            "position": 7,
+            "gender": "female"
+          }
+        ]
+      }
+    ]
+  }
+}

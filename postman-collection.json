@@ -1,0 +1,548 @@
+{
+	"info": {
+		"_postman_id": "2d-metaverse-api",
+		"name": "2D Metaverse API",
+		"description": "Complete API collection for the 2D Metaverse application with Neon PostgreSQL database",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Sign Up",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"john_doe\",\n  \"password\": \"password123\",\n  \"avatarId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/signup",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"signup"
+							]
+						},
+						"description": "Register a new user account"
+					},
+					"response": []
+				},
+				{
+					"name": "Sign In",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"john_doe\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/signin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"signin"
+							]
+						},
+						"description": "Authenticate user and get user details"
+					},
+					"response": []
+				}
+			],
+			"description": "User authentication endpoints"
+		},
+		{
+			"name": "Elements & Avatars",
+			"item": [
+				{
+					"name": "Get All Elements",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/elements",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"elements"
+							]
+						},
+						"description": "Fetch all available elements"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Avatars",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/avatars",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"avatars"
+							]
+						},
+						"description": "Fetch all available avatars"
+					},
+					"response": []
+				}
+			],
+			"description": "Global elements and avatars endpoints"
+		},
+		{
+			"name": "User Management",
+			"item": [
+				{
+					"name": "Update User Metadata",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": 1,\n  \"avatarId\": 2\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/users/metadata",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"metadata"
+							]
+						},
+						"description": "Update user avatar and other metadata"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Bulk User Metadata",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/users/metadata/bulk?userIds=1&userIds=2&userIds=3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"metadata",
+								"bulk"
+							],
+							"query": [
+								{
+									"key": "userIds",
+									"value": "1"
+								},
+								{
+									"key": "userIds",
+									"value": "2"
+								},
+								{
+									"key": "userIds",
+									"value": "3"
+								}
+							]
+						},
+						"description": "Get metadata for multiple users"
+					},
+					"response": []
+				}
+			],
+			"description": "User management and metadata endpoints"
+		},
+		{
+			"name": "Space Management",
+			"item": [
+				{
+					"name": "Create Space",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"My Awesome Space\",\n  \"width\": 100,\n  \"height\": 100,\n  \"ownerId\": 1,\n  \"thumbnail\": \"https://example.com/thumbnail.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/spaces/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"spaces",
+								""
+							]
+						},
+						"description": "Create a new space"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Space by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/spaces/{{spaceId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"spaces",
+								"{{spaceId}}"
+							]
+						},
+						"description": "Get a specific space with its elements"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Space",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/spaces/{{spaceId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"spaces",
+								"{{spaceId}}"
+							]
+						},
+						"description": "Delete a specific space"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Spaces",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/spaces/all",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"spaces",
+								"all"
+							]
+						},
+						"description": "Get all spaces with owner information"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Element to Space",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"spaceId\": 1,\n  \"elementId\": 1,\n  \"x\": 50,\n  \"y\": 30\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/spaces/element",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"spaces",
+								"element"
+							]
+						},
+						"description": "Add an element to a space at specific coordinates"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Element from Space",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"spaceElementId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/spaces/element",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"spaces",
+								"element"
+							]
+						},
+						"description": "Remove an element from a space"
+					},
+					"response": []
+				}
+			],
+			"description": "Space creation, management, and element placement endpoints"
+		},
+		{
+			"name": "Admin Management",
+			"item": [
+				{
+					"name": "Create Element",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"width\": 64,\n  \"height\": 64,\n  \"imageUrl\": \"https://example.com/element.png\",\n  \"isStatic\": false\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admins/element",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admins",
+								"element"
+							]
+						},
+						"description": "Create a new element (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Element",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"width\": 128,\n  \"height\": 128,\n  \"imageUrl\": \"https://example.com/updated-element.png\",\n  \"isStatic\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admins/element/{{elementId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admins",
+								"element",
+								"{{elementId}}"
+							]
+						},
+						"description": "Update an existing element (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Avatar",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Cool Avatar\",\n  \"imageUrl\": \"https://example.com/avatar.png\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admins/avatar",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admins",
+								"avatar"
+							]
+						},
+						"description": "Create a new avatar (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Avatars (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admins/avatar",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admins",
+								"avatar"
+							]
+						},
+						"description": "Get all avatars (Admin endpoint)"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Map",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Default Map\",\n  \"width\": 200,\n  \"height\": 200\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admins/map",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admins",
+								"map"
+							]
+						},
+						"description": "Create a new map (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Map by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admins/map/{{mapId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admins",
+								"map",
+								"{{mapId}}"
+							]
+						},
+						"description": "Get a specific map with its elements (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Admin-only endpoints for managing elements, avatars, and maps"
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "spaceId",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "elementId",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "mapId",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "1",
+			"type": "string"
+		}
+	]
+}
