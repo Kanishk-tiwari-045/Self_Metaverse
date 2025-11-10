@@ -1,14 +1,22 @@
-import { MessageSquare, Users } from 'lucide-react';
+import { MessageSquare, Users, Video, PhoneCall } from 'lucide-react';
 
 interface MapViewToolbarProps {
   isChatOpen: boolean;
   onToggleChat: () => void;
+  isVideoModalOpen: boolean;
+  onToggleVideoModal: () => void;
+  isInCall: boolean;
+  onJoinCall: () => void;
   usersOnline: number;
 }
 
 export const MapViewToolbar = ({
   isChatOpen,
   onToggleChat,
+  isVideoModalOpen,
+  onToggleVideoModal,
+  isInCall,
+  onJoinCall,
   usersOnline,
 }: MapViewToolbarProps) => {
   return (
@@ -25,6 +33,30 @@ export const MapViewToolbar = ({
       >
         <MessageSquare className="w-5 h-5" />
       </button>
+
+      {/* Join Video Call Button */}
+      {!isInCall ? (
+        <button
+          onClick={onJoinCall}
+          className="p-2 rounded-lg transition-colors relative hover:bg-slate-700 text-slate-300 hover:text-white"
+          title="Join Video Call"
+        >
+          <PhoneCall className="w-5 h-5" />
+        </button>
+      ) : (
+        /* Video Modal Toggle Button */
+        <button
+          onClick={onToggleVideoModal}
+          className={`p-2 rounded-lg transition-colors relative ${
+            isVideoModalOpen
+              ? 'bg-green-600 text-white'
+              : 'hover:bg-slate-700 text-slate-300'
+          }`}
+          title="Video Call"
+        >
+          <Video className="w-5 h-5" />
+        </button>
+      )}
 
       {/* Users Count */}
       <div className="flex flex-col items-center gap-1">

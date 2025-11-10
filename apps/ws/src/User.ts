@@ -437,6 +437,218 @@ export class User {
             console.error('Error handling chat message:', err);
           }
           break;
+
+        // Real-time video call WebRTC signaling (doesn't affect player movement)
+        case 'video-join-request':
+          console.log(`[VideoCall] Join request from ${this.userId}`);
+          if (!this.userId || (!this.spaceId && !this.mapId)) return;
+
+          const joinRoomKey = this.spaceId
+            ? `space_${this.spaceId}`
+            : `map_${this.mapId}`;
+          RoomManager.getInstance().broadcast(
+            {
+              type: 'video-join-request',
+              payload: parsedData.payload,
+            },
+            this,
+            joinRoomKey
+          );
+          break;
+
+        case 'video-join-accepted':
+          console.log(
+            `[VideoCall] Join accepted for ${parsedData.payload.userId}`
+          );
+          if (!this.userId || (!this.spaceId && !this.mapId)) return;
+
+          const acceptRoomKey = this.spaceId
+            ? `space_${this.spaceId}`
+            : `map_${this.mapId}`;
+
+          // Send to specific user who requested to join
+          RoomManager.getInstance().sendToUser(
+            {
+              type: 'video-join-accepted',
+              payload: parsedData.payload,
+            },
+            parsedData.payload.userId,
+            acceptRoomKey
+          );
+          break;
+
+        case 'video-join-declined':
+          console.log(
+            `[VideoCall] Join declined for ${parsedData.payload.userId}`
+          );
+          if (!this.userId || (!this.spaceId && !this.mapId)) return;
+
+          const declineRoomKey = this.spaceId
+            ? `space_${this.spaceId}`
+            : `map_${this.mapId}`;
+          RoomManager.getInstance().sendToUser(
+            {
+              type: 'video-join-declined',
+              payload: parsedData.payload,
+            },
+            parsedData.payload.userId,
+            declineRoomKey
+          );
+          break;
+
+        case 'video-join':
+          console.log(`[VideoCall] User ${this.userId} joined video call`);
+          if (!this.userId || (!this.spaceId && !this.mapId)) return;
+
+          const videoJoinRoomKey = this.spaceId
+            ? `space_${this.spaceId}`
+            : `map_${this.mapId}`;
+
+          // Broadcast to all other users that this user joined
+          RoomManager.getInstance().broadcast(
+            {
+              type: 'video-join',
+              payload: {
+                ...parsedData.payload,
+                userId: this.userId,
+              },
+            },
+            this,
+            videoJoinRoomKey
+          );
+
+          // TODO: Send existing participants to the new joiner
+          // This would require tracking active video call participants per room
+          // For now, peer connections will be established through the join process
+          break;
+
+        case 'video-leave':
+          console.log(`[VideoCall] User ${this.userId} left video call`);
+          if (!this.userId || (!this.spaceId && !this.mapId)) return;
+
+          const videoLeaveRoomKey = this.spaceId
+            ? `space_${this.spaceId}`
+            : `map_${this.mapId}`;
+          RoomManager.getInstance().broadcast(
+            {
+              type: 'video-leave',
+              payload: {
+                ...parsedData.payload,
+                userId: this.userId,
+              },
+            },
+            this,
+            videoLeaveRoomKey
+          );
+          break;
+
+        case 'video-offer':
+          console.log(
+            `[VideoCall] WebRTC offer from ${this.userId} to ${parsedData.payload.targetUserId}`
+          );
+          if (!this.userId || (!this.spaceId && !this.mapId)) return;
+
+          const offerRoomKey = this.spaceId
+            ? `space_${this.spaceId}`
+            : `map_${this.mapId}`;
+          RoomManager.getInstance().sendToUser(
+            {
+              type: 'video-offer',
+              payload: {
+                ...parsedData.payload,
+                fromUserId: this.userId,
+              },
+            },
+            parsedData.payload.targetUserId,
+            offerRoomKey
+          );
+          break;
+
+        case 'video-answer':
+          console.log(
+            `[VideoCall] WebRTC answer from ${this.userId} to ${parsedData.payload.targetUserId}`
+          );
+          if (!this.userId || (!this.spaceId && !this.mapId)) return;
+
+          const answerRoomKey = this.spaceId
+            ? `space_${this.spaceId}`
+            : `map_${this.mapId}`;
+          RoomManager.getInstance().sendToUser(
+            {
+              type: 'video-answer',
+              payload: {
+                ...parsedData.payload,
+                fromUserId: this.userId,
+              },
+            },
+            parsedData.payload.targetUserId,
+            answerRoomKey
+          );
+          break;
+
+        case 'video-ice-candidate':
+          console.log(
+            `[VideoCall] ICE candidate from ${this.userId} to ${parsedData.payload.targetUserId}`
+          );
+          if (!this.userId || (!this.spaceId && !this.mapId)) return;
+
+          const iceRoomKey = this.spaceId
+            ? `space_${this.spaceId}`
+            : `map_${this.mapId}`;
+          RoomManager.getInstance().sendToUser(
+            {
+              type: 'video-ice-candidate',
+              payload: {
+                ...parsedData.payload,
+                fromUserId: this.userId,
+              },
+            },
+            parsedData.payload.targetUserId,
+            iceRoomKey
+          );
+          break;
+
+        case 'video-media-state':
+          console.log(`[VideoCall] Media state change from ${this.userId}`);
+          if (!this.userId || (!this.spaceId && !this.mapId)) return;
+
+          const mediaStateRoomKey = this.spaceId
+            ? `space_${this.spaceId}`
+            : `map_${this.mapId}`;
+          RoomManager.getInstance().broadcast(
+            {
+              type: 'video-media-state',
+              payload: {
+                ...parsedData.payload,
+                userId: this.userId,
+              },
+            },
+            this,
+            mediaStateRoomKey
+          );
+          break;
+
+        case 'video-kick':
+          console.log(
+            `[VideoCall] User ${parsedData.payload.targetUserId} kicked by ${this.userId}`
+          );
+          if (!this.userId || (!this.spaceId && !this.mapId)) return;
+
+          const kickRoomKey = this.spaceId
+            ? `space_${this.spaceId}`
+            : `map_${this.mapId}`;
+          RoomManager.getInstance().sendToUser(
+            {
+              type: 'video-kick',
+              payload: {
+                ...parsedData.payload,
+                kickedBy: this.userId,
+              },
+            },
+            parsedData.payload.targetUserId,
+            kickRoomKey
+          );
+          break;
       }
     });
   }
