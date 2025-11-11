@@ -18,6 +18,7 @@ function getRandomString(length: number) {
 export class User {
   public id: string;
   public userId?: string;
+  public username?: string;
   public avatarUrl?: string;
   private spaceId?: string;
   private mapId?: string;
@@ -76,14 +77,26 @@ export class User {
 
           this.userId = userId;
 
-          // Fetch user avatar
+          // Fetch user avatar and username
           const user = await client.user.findUnique({
             where: { id: parseInt(userId) },
-            include: { avatar: true },
+            select: {
+              id: true,
+              username: true,
+              avatar: {
+                select: {
+                  imageUrl: true,
+                },
+              },
+            },
           });
 
           if (user?.avatar) {
             this.avatarUrl = user.avatar.imageUrl;
+          }
+
+          if (user?.username) {
+            this.username = user.username;
           }
 
           // Handle space joining
@@ -143,6 +156,7 @@ export class User {
                     ?.map((u) => ({
                       id: u.id,
                       userId: u.userId,
+                      username: u.username, // Add username
                       x: u.x,
                       y: u.y,
                       avatarUrl: u.avatarUrl,
@@ -156,6 +170,7 @@ export class User {
                 type: 'user-joined',
                 payload: {
                   userId: this.userId,
+                  username: this.username,
                   x: this.x,
                   y: this.y,
                   avatarUrl: this.avatarUrl,
@@ -250,6 +265,7 @@ export class User {
                     ?.map((u) => ({
                       id: u.id,
                       userId: u.userId,
+                      username: u.username,
                       x: u.x,
                       y: u.y,
                       avatarUrl: u.avatarUrl,
@@ -263,6 +279,7 @@ export class User {
                 type: 'user-joined',
                 payload: {
                   userId: this.userId,
+                  username: this.username,
                   x: this.x,
                   y: this.y,
                   avatarUrl: this.avatarUrl,
@@ -356,6 +373,7 @@ export class User {
             const text = String(parsedData.payload?.text || '').slice(0, 2000);
             const displayName =
               parsedData.payload?.displayName || String(this.userId || this.id);
+            const taggedUserIds = parsedData.payload?.taggedUserIds || [];
 
             if ((!this.spaceId && !this.mapId) || !this.userId || !text.trim())
               return;
@@ -363,6 +381,53 @@ export class User {
             const roomKey = this.spaceId
               ? `space_${this.spaceId}`
               : `map_${this.mapId}`;
+
+            // Filter taggedUserIds to ensure they are valid user IDs in the room
+            let validTaggedUserIds: string[] = [];
+            if (taggedUserIds.length > 0) {
+              try {
+                // Get all users in the current room/map to validate tagged users
+                let roomUsers;
+                if (this.spaceId) {
+                  // For spaces, get users who have messages in this space (recent participants)
+                  roomUsers = await client.user.findMany({
+                    where: {
+                      messages: {
+                        some: {
+                          spaceId: parseInt(this.spaceId),
+                        },
+                      },
+                    },
+                    select: {
+                      id: true,
+                    },
+                  });
+                } else if (this.mapId) {
+                  // For maps, get users who have messages in this map
+                  roomUsers = await client.user.findMany({
+                    where: {
+                      messages: {
+                        some: {
+                          mapId: parseInt(this.mapId),
+                        },
+                      },
+                    },
+                    select: {
+                      id: true,
+                    },
+                  });
+                }
+
+                if (roomUsers) {
+                  const roomUserIds = roomUsers.map((u) => String(u.id));
+                  validTaggedUserIds = taggedUserIds.filter((userId: string) =>
+                    roomUserIds.includes(userId)
+                  );
+                }
+              } catch (err) {
+                console.error('Error validating tagged users:', err);
+              }
+            }
 
             if (this.spaceId) {
               // For spaces: persist message to database
@@ -381,6 +446,7 @@ export class User {
                 displayName,
                 text: text.trim(),
                 createdAt: savedMessage.createdAt.toISOString(),
+                taggedUsers: validTaggedUserIds,
               };
 
               // Send to sender immediately
@@ -415,6 +481,7 @@ export class User {
                 displayName,
                 text: text.trim(),
                 createdAt: savedMessage.createdAt.toISOString(),
+                taggedUsers: validTaggedUserIds,
               };
 
               // Send to sender immediately

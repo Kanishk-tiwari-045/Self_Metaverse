@@ -8,6 +8,7 @@ interface MapViewToolbarProps {
   isInCall: boolean;
   onJoinCall: () => void;
   usersOnline: number;
+  hasUnreadTags?: boolean;
 }
 
 export const MapViewToolbar = ({
@@ -18,6 +19,7 @@ export const MapViewToolbar = ({
   isInCall,
   onJoinCall,
   usersOnline,
+  hasUnreadTags = false,
 }: MapViewToolbarProps) => {
   return (
     <div className="fixed top-0 left-0 w-12 h-full bg-slate-800 border-r border-slate-700 flex flex-col items-center py-4 gap-4 z-40">
@@ -32,6 +34,9 @@ export const MapViewToolbar = ({
         title="Chat"
       >
         <MessageSquare className="w-5 h-5" />
+        {hasUnreadTags && !isChatOpen && (
+          <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+        )}
       </button>
 
       {/* Join Video Call Button */}

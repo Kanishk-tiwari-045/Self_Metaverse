@@ -28,6 +28,7 @@ export class WorkAdventureVideoService {
   private peerConnections: Map<string, RTCPeerConnection> = new Map();
   private initiatorId: string | null = null;
   private currentUserId: string | null = null;
+  private currentDisplayName: string | null = null;
   private roomName: string | null = null;
   private pendingJoinRequests: Map<string, JoinRequest> = new Map();
 
@@ -106,6 +107,7 @@ export class WorkAdventureVideoService {
 
       this.roomName = roomName;
       this.currentUserId = userId;
+      this.currentDisplayName = displayName;
 
       // If this is not the first user, send join request
       if (requestToJoin) {
@@ -244,11 +246,10 @@ export class WorkAdventureVideoService {
 
         this.active = true;
 
-        // Add self to participants
-        const displayName = `User ${this.currentUserId}`; // Better display name
+        // Add self to participants using the provided display name
         this.participants.set(this.currentUserId, {
           userId: this.currentUserId,
-          displayName,
+          displayName: this.currentDisplayName || `User ${this.currentUserId}`,
           isInitiator: false,
           micEnabled: this.micEnabled,
           cameraEnabled: this.cameraEnabled,
@@ -259,7 +260,7 @@ export class WorkAdventureVideoService {
         this.sendSignal('video-join', {
           roomName: this.roomName,
           userId: this.currentUserId,
-          displayName,
+          displayName: this.currentDisplayName || `User ${this.currentUserId}`,
           micEnabled: this.micEnabled,
           cameraEnabled: this.cameraEnabled,
           isInitiator: false,

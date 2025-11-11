@@ -91,6 +91,7 @@ export function useWebSocket({
               const userIdString = String(u.userId);
               userMap.set(userIdString, {
                 id: userIdString,
+                username: u.username,
                 x: u.x || 0,
                 y: u.y || 0,
                 avatarUrl: u.avatarUrl,
@@ -100,7 +101,8 @@ export function useWebSocket({
                 userIdString,
                 u.x,
                 u.y,
-                u.avatarUrl
+                u.avatarUrl,
+                u.username
               );
             }
           });
@@ -115,6 +117,7 @@ export function useWebSocket({
             if (!newUsers.has(joinedUserId)) {
               newUsers.set(joinedUserId, {
                 id: joinedUserId,
+                username: message.payload.username,
                 x: message.payload.x || 0,
                 y: message.payload.y || 0,
                 avatarUrl: message.payload.avatarUrl,
@@ -127,7 +130,8 @@ export function useWebSocket({
             joinedUserId,
             message.payload.x,
             message.payload.y,
-            message.payload.avatarUrl
+            message.payload.avatarUrl,
+            message.payload.username
           );
           break;
 
@@ -207,6 +211,7 @@ export function useWebSocket({
               displayName: message.payload.displayName,
               text: message.payload.text,
               createdAt: message.payload.createdAt,
+              taggedUsers: message.payload.taggedUsers,
             },
           ]);
           break;

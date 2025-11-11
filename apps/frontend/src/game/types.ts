@@ -1,5 +1,6 @@
 export interface User {
   id: string;
+  username?: string;
   x: number;
   y: number;
   avatarId?: number;
@@ -19,6 +20,7 @@ export interface ChatMessage {
   displayName: string;
   text: string;
   createdAt: string;
+  taggedUsers?: string[]; // Array of userIds that were tagged in this message
 }
 
 export interface PositionInterface {

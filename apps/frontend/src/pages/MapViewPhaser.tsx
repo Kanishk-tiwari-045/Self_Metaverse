@@ -47,6 +47,7 @@ const MapViewPhaser = () => {
   const [newMessage, setNewMessage] = useState<string>('');
   const [gameReady, setGameReady] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [hasUnreadTags, setHasUnreadTags] = useState(false);
 
   // Video call state
   const [videoCallState, setVideoCallState] = useState<VideoCallState>({
@@ -379,6 +380,26 @@ const MapViewPhaser = () => {
     };
   }, [isSidebarOpen]);
 
+  // Check for tagged messages and update notification state
+  useEffect(() => {
+    if (!currentUser || isSidebarOpen) return;
+
+    const latestMessage = chatMessages[chatMessages.length - 1];
+    if (
+      latestMessage &&
+      latestMessage.taggedUsers?.includes(currentUser.userId)
+    ) {
+      setHasUnreadTags(true);
+    }
+  }, [chatMessages, currentUser, isSidebarOpen]);
+
+  // Clear unread tags when sidebar is opened
+  useEffect(() => {
+    if (isSidebarOpen) {
+      setHasUnreadTags(false);
+    }
+  }, [isSidebarOpen]);
+
   // WebSocket connection
   const wsRef = useWebSocket({
     mapId: mapId!,
@@ -425,12 +446,26 @@ const MapViewPhaser = () => {
     )
       return;
 
+    // Extract tagged users from message
+    const taggedUserIds: string[] = [];
+    const regex = /@(\w+)/g;
+    let match;
+    while ((match = regex.exec(newMessage)) !== null) {
+      // For now, assume the format is @User123, extract the ID
+      const mention = match[1];
+      if (mention.startsWith('User')) {
+        const userId = mention.replace('User', '');
+        taggedUserIds.push(userId);
+      }
+    }
+
     wsRef.current.send(
       JSON.stringify({
         type: 'chat',
         payload: {
           text: newMessage.trim(),
           displayName: user.username || `User ${user.id}`,
+          taggedUserIds: taggedUserIds.length > 0 ? taggedUserIds : undefined,
         },
       })
     );
@@ -611,6 +646,7 @@ const MapViewPhaser = () => {
         isInCall={videoCallState.isInCall}
         onJoinCall={handleJoinCall}
         usersOnline={users.size + (currentUser ? 1 : 0)}
+        hasUnreadTags={hasUnreadTags}
       />
 
       {/* Chat Sidebar - Slides in from left */}

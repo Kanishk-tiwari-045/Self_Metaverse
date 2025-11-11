@@ -227,20 +227,6 @@ export const FloatingVideoCard: React.FC<FloatingVideoCardProps> = ({
           </div>
         </div>
 
-        {/* Status Indicators */}
-        <div className="absolute top-2 left-2 flex gap-1">
-          {!micEnabled && (
-            <div className="p-1 bg-red-500/80 rounded">
-              <MicOff className="w-2.5 h-2.5 text-white" />
-            </div>
-          )}
-          {!cameraEnabled && (
-            <div className="p-1 bg-red-500/80 rounded">
-              <VideoOff className="w-2.5 h-2.5 text-white" />
-            </div>
-          )}
-        </div>
-
         {/* Connection Indicator */}
         <div className="absolute top-2 right-2">
           <div
