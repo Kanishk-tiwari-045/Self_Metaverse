@@ -1,4 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+
+interface TmjTemplate {
+  filename: string;
+  displayName: string;
+  width: number;
+  height: number;
+}
 
 interface CreateMapModalProps {
   isOpen: boolean;
@@ -8,12 +15,14 @@ interface CreateMapModalProps {
     name: string;
     width: number;
     height: number;
+    tmjTemplate: string;
   };
   setNewMap: React.Dispatch<
     React.SetStateAction<{
       name: string;
       width: number;
       height: number;
+      tmjTemplate: string;
     }>
   >;
   selectedTemplate: number | null;
@@ -31,6 +40,46 @@ export const CreateMapModal: React.FC<CreateMapModalProps> = ({
   isCreatingMap,
   userRole,
 }) => {
+  const [tmjTemplates, setTmjTemplates] = useState<TmjTemplate[]>([]);
+  const [maxDimensions, setMaxDimensions] = useState({
+    width: 1000,
+    height: 1000,
+  });
+
+  useEffect(() => {
+    // Fetch available TMJ templates
+    const fetchTmjTemplates = async () => {
+      try {
+        const response = await fetch(
+          'http://localhost:3000/api/v1/maps/tmj-templates'
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setTmjTemplates(data.templates);
+        }
+      } catch (error) {
+        console.error('Failed to fetch TMJ templates:', error);
+      }
+    };
+
+    if (isOpen) {
+      fetchTmjTemplates();
+    }
+  }, [isOpen]);
+
+  const handleTmjSelection = (filename: string) => {
+    const template = tmjTemplates.find((t) => t.filename === filename);
+    if (template) {
+      setMaxDimensions({ width: template.width, height: template.height });
+      setNewMap({
+        ...newMap,
+        width: template.width,
+        height: template.height,
+        tmjTemplate: template.filename,
+      });
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -47,6 +96,27 @@ export const CreateMapModal: React.FC<CreateMapModalProps> = ({
               </p>
             </div>
           )}
+
+          {/* TMJ Template Selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Map Template
+            </label>
+            <select
+              value={newMap.tmjTemplate || ''}
+              onChange={(e) => handleTmjSelection(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-700"
+              required
+            >
+              <option value="">Select a template...</option>
+              {tmjTemplates.map((template) => (
+                <option key={template.filename} value={template.filename}>
+                  {template.displayName} ({template.width}x{template.height})
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Map Name
@@ -68,12 +138,15 @@ export const CreateMapModal: React.FC<CreateMapModalProps> = ({
               <input
                 type="number"
                 min="10"
-                max="1000"
+                max={maxDimensions.width}
                 value={newMap.width}
                 onChange={(e) =>
                   setNewMap({
                     ...newMap,
-                    width: parseInt(e.target.value) || 100,
+                    width: Math.min(
+                      parseInt(e.target.value) || 100,
+                      maxDimensions.width
+                    ),
                   })
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-700 placeholder-gray-400"
@@ -83,6 +156,9 @@ export const CreateMapModal: React.FC<CreateMapModalProps> = ({
                   colorScheme: 'light',
                 }}
               />
+              <p className="text-xs text-gray-500 mt-1">
+                Max: {maxDimensions.width}
+              </p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -91,12 +167,15 @@ export const CreateMapModal: React.FC<CreateMapModalProps> = ({
               <input
                 type="number"
                 min="10"
-                max="1000"
+                max={maxDimensions.height}
                 value={newMap.height}
                 onChange={(e) =>
                   setNewMap({
                     ...newMap,
-                    height: parseInt(e.target.value) || 100,
+                    height: Math.min(
+                      parseInt(e.target.value) || 100,
+                      maxDimensions.height
+                    ),
                   })
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-700 placeholder-gray-400"
@@ -106,6 +185,9 @@ export const CreateMapModal: React.FC<CreateMapModalProps> = ({
                   colorScheme: 'light',
                 }}
               />
+              <p className="text-xs text-gray-500 mt-1">
+                Max: {maxDimensions.height}
+              </p>
             </div>
           </div>
           {/* Template checkbox for admins only */}

@@ -8,6 +8,7 @@ import {
   AddMapSpaceSchema,
   DeleteElementSchema,
 } from '../types';
+import { uploadTmjToS3 } from './s3Service';
 
 export interface CreateElementData {
   imageUrl: string;
@@ -36,6 +37,7 @@ export interface CreateMapData {
   }>;
   isTemplate?: boolean;
   accessCode?: string;
+  tmjTemplate?: string;
 }
 
 export interface MapElementData {
@@ -135,6 +137,7 @@ export async function createMap(userId: number, data: CreateMapData) {
     height: parseInt(parsedData.data.dimensions.split('x')[1]),
     creatorId: userId,
     isTemplate: isTemplate,
+    templateName: data.tmjTemplate || null,
     mapElements: {
       create: parsedData.data.defaultElements.map((e) => ({
         elementId: parseInt(e.elementId),
@@ -150,6 +153,23 @@ export async function createMap(userId: number, data: CreateMapData) {
   }
 
   const map = await client.map.create({ data: mapData });
+
+  // Upload TMJ file to S3 if template is specified
+  if (data.tmjTemplate) {
+    try {
+      const tmjUrl = await uploadTmjToS3(userId, map.id, data.tmjTemplate);
+
+      // Update the map with the S3 URL
+      await client.map.update({
+        where: { id: map.id },
+        data: { tmjFileUrl: tmjUrl },
+      });
+    } catch (error) {
+      console.error('Failed to upload TMJ to S3:', error);
+      // Continue even if S3 upload fails, but log the error
+    }
+  }
+
   return { id: map.id };
 }
 

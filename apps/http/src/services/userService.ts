@@ -1,5 +1,6 @@
 import client from '@repo/db/client';
 import { UpdateMetadataSchema } from '../types';
+import { uploadTmjToS3 } from './s3Service';
 
 export interface UpdateMetadataData {
   avatarId: string;
@@ -16,6 +17,7 @@ export interface MapVisitData {
 export interface CopyTemplateData {
   templateId: string;
   name: string;
+  tmjTemplate?: string;
 }
 
 export interface CreateMapData {
@@ -154,6 +156,10 @@ export async function getOwnedMaps(userId: number) {
 export async function copyTemplate(userId: number, data: CopyTemplateData) {
   const { templateId, name } = data;
 
+  console.log(
+    `[copyTemplate] User ${userId} copying template ${templateId}, tmjTemplate: ${data.tmjTemplate}`
+  );
+
   // Get the template with all its related data
   const template = await client.map.findFirst({
     where: {
@@ -173,6 +179,10 @@ export async function copyTemplate(userId: number, data: CopyTemplateData) {
   if (!template) {
     throw new Error('Template not found');
   }
+
+  console.log(
+    `[copyTemplate] Template found: ${template.name}, templateName: ${template.templateName}`
+  );
 
   // Generate unique access code
   const generateAccessCode = () => {
@@ -202,6 +212,7 @@ export async function copyTemplate(userId: number, data: CopyTemplateData) {
         accessCode,
         isTemplate: false,
         templateId: template.id,
+        templateName: data.tmjTemplate || template.templateName || null,
       },
     });
 
@@ -254,6 +265,38 @@ export async function copyTemplate(userId: number, data: CopyTemplateData) {
 
     return newMap;
   });
+
+  // Upload TMJ file to S3 if template is specified
+  // Priority: 1) data.tmjTemplate from frontend, 2) template.templateName from DB, 3) default to 'office.tmj'
+  const tmjTemplate = data.tmjTemplate || template.templateName || 'office.tmj';
+  console.log(
+    `[copyTemplate] TMJ template to upload: ${tmjTemplate} (from: ${data.tmjTemplate ? 'request' : template.templateName ? 'template' : 'default'})`
+  );
+
+  if (tmjTemplate) {
+    try {
+      console.log(
+        `[copyTemplate] Uploading TMJ to S3 for user ${userId}, map ${copiedMap.id}`
+      );
+      const tmjUrl = await uploadTmjToS3(userId, copiedMap.id, tmjTemplate);
+      console.log(`[copyTemplate] TMJ uploaded successfully: ${tmjUrl}`);
+
+      // Update the map with the S3 URL and template name
+      await client.map.update({
+        where: { id: copiedMap.id },
+        data: {
+          tmjFileUrl: tmjUrl,
+          templateName: tmjTemplate,
+        },
+      });
+      console.log(`[copyTemplate] Map updated with TMJ URL and template name`);
+    } catch (error) {
+      console.error('[copyTemplate] Failed to upload TMJ to S3:', error);
+      // Continue even if S3 upload fails
+    }
+  } else {
+    console.log('[copyTemplate] No TMJ template specified, skipping S3 upload');
+  }
 
   // Record a visit
   await client.userMapVisit.create({

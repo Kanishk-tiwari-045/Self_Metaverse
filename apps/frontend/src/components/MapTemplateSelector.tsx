@@ -10,6 +10,7 @@ interface MapTemplate {
   thumbnail?: string;
   category: string;
   creatorName: string;
+  templateName?: string;
 }
 
 interface MapTemplateSelectorProps {
@@ -71,6 +72,9 @@ export const MapTemplateSelector: React.FC<MapTemplateSelectorProps> = ({
 
     setIsCreating(true);
     try {
+      // Use templateName from template, or default to 'office.tmj' if null
+      const tmjTemplate = selectedTemplate.templateName || 'office.tmj';
+
       const response = await fetch(
         'http://localhost:3000/api/v1/user/copy-template',
         {
@@ -82,6 +86,7 @@ export const MapTemplateSelector: React.FC<MapTemplateSelectorProps> = ({
           body: JSON.stringify({
             templateId: selectedTemplate.id,
             name: mapName.trim(),
+            tmjTemplate: tmjTemplate,
           }),
         }
       );
