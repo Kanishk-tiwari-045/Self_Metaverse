@@ -10,6 +10,7 @@ import {
   getMapByCode,
   getMapForEdit,
 } from '../../services/mapService';
+import { getAvailableTmjTemplates } from '../../services/s3Service';
 
 export const mapsRouter = Router();
 
@@ -69,6 +70,17 @@ mapsRouter.get('/templates', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Failed to get templates:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Get available TMJ templates
+mapsRouter.get('/tmj-templates', async (req, res) => {
+  try {
+    const templates = getAvailableTmjTemplates();
+    res.json({ templates });
+  } catch (error) {
+    console.error('Failed to get TMJ templates:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });

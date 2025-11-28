@@ -76,6 +76,9 @@ export async function getMapDetails(mapId: number) {
     height: map.height,
     ownerId: map.creatorId,
     owner: map.creator.username,
+    tmjUrl: map.tmjFileUrl,
+    tmjTemplate: map.templateName,
+    templateName: map.templateName,
     elements: map.mapElements.map((me) => ({
       id: me.id,
       elementId: me.elementId,
@@ -131,6 +134,7 @@ export async function getTemplates() {
       height: template.height,
       category: 'Template',
       creatorName: template.creator.username,
+      templateName: template.templateName,
     })),
   };
 }

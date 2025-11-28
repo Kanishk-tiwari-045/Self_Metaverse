@@ -36,6 +36,7 @@ export const NewDashboardPage = () => {
     name: '',
     width: 100,
     height: 100,
+    tmjTemplate: '',
   });
 
   // Redirect if not authenticated
@@ -161,6 +162,7 @@ export const NewDashboardPage = () => {
         name: newMap.name,
         dimensions: `${newMap.width}x${newMap.height}`,
         defaultElements: [],
+        tmjTemplate: newMap.tmjTemplate,
       };
 
       // Add template info for regular users
@@ -206,7 +208,7 @@ export const NewDashboardPage = () => {
 
       if (response.ok) {
         setShowCreateMapModal(false);
-        setNewMap({ name: '', width: 100, height: 100 });
+        setNewMap({ name: '', width: 100, height: 100, tmjTemplate: '' });
         setSelectedTemplate(null);
 
         // Show different success messages

@@ -27,15 +27,22 @@ export class GameScene extends Phaser.Scene {
     moving: boolean;
   } = { x: -1, y: -1, direction: 'down', moving: false };
   private playerDirection: 'up' | 'down' | 'left' | 'right' = 'down';
+  private tmjUrl: string | null = null;
 
   constructor(onMovement: (x: number, y: number) => void) {
     super({ key: 'GameScene' });
     this.onMovement = onMovement;
   }
 
+  setTmjUrl(url: string | null) {
+    this.tmjUrl = url;
+  }
+
   preload() {
-    // Load Tiled map JSON
-    this.load.tilemapTiledJSON('map', '/office.tmj');
+    // Load Tiled map JSON - use dynamic URL if available, otherwise fallback to office.tmj
+    const mapUrl = this.tmjUrl || '/office.tmj';
+    console.log(`Loading TMJ map from: ${mapUrl}`);
+    this.load.tilemapTiledJSON('map', mapUrl);
 
     // Load tileset images with proper filtering for pixel art
     const tilesets = [

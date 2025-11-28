@@ -280,6 +280,17 @@ const MapViewPhaser = () => {
   useEffect(() => {
     if (map && user && gameRef.current && !gameInstance.current) {
       const container = gameRef.current;
+
+      // Create GameScene with TMJ URL
+      const gameScene = new GameScene(handleMovement);
+
+      // Set the TMJ URL if available, otherwise use fallback
+      const tmjUrl =
+        (map as any).tmjFileUrl ||
+        `/pre-maps/${(map as any).templateName || 'office.tmj'}`;
+      console.log(`Setting TMJ URL: ${tmjUrl}`);
+      gameScene.setTmjUrl(tmjUrl);
+
       const config: Phaser.Types.Core.GameConfig = {
         type: Phaser.AUTO,
         width: container.clientWidth,
@@ -296,7 +307,7 @@ const MapViewPhaser = () => {
           pixelArt: true,
           roundPixels: true,
         },
-        scene: new GameScene(handleMovement),
+        scene: gameScene,
       };
 
       gameInstance.current = new Phaser.Game(config);

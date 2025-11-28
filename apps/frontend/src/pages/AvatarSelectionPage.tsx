@@ -249,10 +249,10 @@ export const AvatarSelectionPage: React.FC = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white/10 backdrop-blur-md rounded-2xl max-w-6xl w-full min-h-[80vh] flex flex-col"
+        className="bg-white/10 backdrop-blur-md rounded-2xl max-w-6xl w-full h-[85vh] flex flex-col"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/20">
+        <div className="flex items-center justify-between p-6 border-b border-white/20 flex-shrink-0">
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate(userData ? '/signup' : '/profile')}
@@ -268,14 +268,14 @@ export const AvatarSelectionPage: React.FC = () => {
         </div>
 
         {error && (
-          <div className="mx-6 mt-4 p-4 bg-red-500/20 border border-red-500/30 rounded-lg">
+          <div className="mx-6 mt-4 p-4 bg-red-500/20 border border-red-500/30 rounded-lg flex-shrink-0">
             <p className="text-red-200">{error}</p>
           </div>
         )}
 
-        <div className="flex-1 flex flex-col lg:flex-row p-6 gap-8 min-h-0">
-          {/* Avatar Preview */}
-          <div className="flex flex-col items-center gap-4 lg:w-80">
+        <div className="flex-1 flex flex-col lg:flex-row p-6 gap-8 overflow-hidden">
+          {/* Avatar Preview - Static on Left */}
+          <div className="flex flex-col items-center gap-4 lg:w-80 flex-shrink-0">
             <div className="bg-white/5 rounded-2xl p-6 flex flex-col items-center gap-4">
               {selectedAvatar && (
                 <AvatarPreview
@@ -325,16 +325,16 @@ export const AvatarSelectionPage: React.FC = () => {
             </button>
           </div>
 
-          {/* Avatar Grid */}
-          <div className="flex-1 flex flex-col min-h-0">
-            <h3 className="text-lg font-semibold text-white mb-4">
+          {/* Avatar Grid - Scrollable on Right */}
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <h3 className="text-lg font-semibold text-white mb-4 flex-shrink-0">
               Select Character
             </h3>
-            <p className="text-sm text-white/60 mb-4">
+            <p className="text-sm text-white/60 mb-4 flex-shrink-0">
               Use arrow keys to navigate • Click to select
             </p>
 
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-white/5 hover:scrollbar-thumb-white/30 pr-2">
               {avatarData?.avatars.collections.map(
                 (collection, collectionIndex) => (
                   <div key={collection.name} className="mb-6">
@@ -376,7 +376,7 @@ export const AvatarSelectionPage: React.FC = () => {
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-white/20">
+        <div className="p-6 border-t border-white/20 flex-shrink-0">
           <div className="flex justify-between">
             <button
               onClick={() => navigate(userData ? '/signup' : '/profile')}
