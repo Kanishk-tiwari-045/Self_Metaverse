@@ -17,6 +17,31 @@ jobs:
       run: npm install -g pnpm && pnpm install
     - name: Install Playwright Browsers
       run: pnpm exec playwright install --with-deps
+    - name: Setup environment
+      run: |
+        # Use DATABASE_URL from .env.example as fallback, or set a test database URL
+        if [ -z "$DATABASE_URL" ]; then
+          echo "DATABASE_URL=postgresql://test:test@localhost:5432/testdb" >> .env
+        else
+          echo "DATABASE_URL=$DATABASE_URL" >> .env
+        fi
+        echo "NODE_ENV=test" >> .env
+        echo "PORT=3000" >> .env
+        echo "WS_PORT=3001" >> .env
+        echo "JWT_PASSWORD=test_jwt_secret" >> .env
+        echo "TEST_ADMIN_USERNAME=admin" >> .env
+        echo "TEST_ADMIN_PASSWORD=pass123" >> .env
+    - name: Start all services
+      run: pnpm run dev &
+    - name: Wait for services to be ready
+      run: |
+        echo "Waiting for HTTP API server..."
+        timeout 60 bash -c 'until curl -f http://localhost:3000/api/v1/health > /dev/null 2>&1; do sleep 1; done'
+        echo "Waiting for WebSocket server..."
+        timeout 30 bash -c 'until nc -z localhost 3001; do sleep 1; done'
+        echo "Waiting for frontend..."
+        timeout 60 bash -c 'until curl -f http://localhost:5173 > /dev/null 2>&1; do sleep 1; done'
+        echo "All services are ready!"
     - name: Run Playwright tests
       run: pnpm exec playwright test
     - uses: actions/upload-artifact@v4
