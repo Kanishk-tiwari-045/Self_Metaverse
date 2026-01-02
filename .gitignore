@@ -4,7 +4,7 @@
 node_modules
 .pnp
 .pnp.js
-
+PLAYWRIGHT_BEST_PRACTICES_ANALYSIS.md
 # Local env files
 .env
 .env.local
@@ -36,3 +36,10 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
