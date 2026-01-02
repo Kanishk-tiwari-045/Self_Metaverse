@@ -135,7 +135,7 @@ test.describe('AvatarSelectionPage Component Tests', () => {
     await page.waitForURL('**/avatar-selection');
 
     // Wait a bit for the page to fully load after navigation
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(8000);
 
     // Wait for avatars and select one
     await page.waitForSelector('button[id^="avatar-"]', { timeout: 15000 });

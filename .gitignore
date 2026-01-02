@@ -11,10 +11,11 @@ PLAYWRIGHT_BEST_PRACTICES_ANALYSIS.md
 .env.development.local
 .env.test.local
 .env.production.local
-
+PROJECT.md
+PROJECT_DOCUMENTATION.md
 # Testing
 coverage
-
+CI_CD_SETUP_GUIDE.md
 # Turbo
 .turbo
 
@@ -26,7 +27,7 @@ coverage
 out/
 build
 dist
-
+packages/db/prisma/migrations/
 
 # Debug
 npm-debug.log*
